@@ -1,9 +1,9 @@
 apic:
   tenants:
-    - name: ABC
+    - name: mgmt
       bridge_domains:
         - name: BD1
-          alias: ABC_BD1
+          alias: mgmt_BD1
           mac: 00:22:BD:F8:19:FE
           virtual_mac: 00:23:BD:F8:19:12
           ep_move_detection: true
@@ -19,8 +19,8 @@ apic:
           l3_multicast: false
           vrf: VRF1
           subnets:
-            - ip: 1.1.1.1/24
-              description: My Desc
+            - ip: 10.1.101.1/24
+              description: mgmt.100
               primary_ip: true
               public: true
               private: false
@@ -34,3 +34,70 @@ apic:
           dhcp_labels:
             - dhcp_relay_policy: DHCP-RELAY1
               dhcp_option_policy: DHCP-OPTION1
+        - name: BD2
+          alias: mgmt_BD2
+          mac: 00:22:BD:F8:19:FF
+          virtual_mac: 00:23:BD:F8:19:13
+          ep_move_detection: true
+          arp_flooding: false
+          ip_dataplane_learning: false
+          limit_ip_learn_to_subnets: false
+          multi_destination_flooding: encap-flood
+          unknown_unicast: proxy
+          unknown_ipv4_multicast: flood
+          unknown_ipv6_multicast: flood
+          unicast_routing: true
+          advertise_host_routes: true
+          l3_multicast: false
+          vrf: VRF1
+          subnets:
+            - ip: 10.1.102.1/24
+              description: mgmt.102
+              primary_ip: true
+              public: true
+              private: false
+              shared: true
+              virtual: false
+              igmp_querier: true
+              nd_ra_prefix: true
+              no_default_gateway: false
+          l3outs:
+            - L3OUT1
+          dhcp_labels:
+            - dhcp_relay_policy: DHCP-RELAY1
+              dhcp_option_policy: DHCP-OPTION1
+
+      application_profiles:
+        - name: VLANS
+          endpoint_groups:
+            - name: VLAN100
+              bridge_domain: 10.1.101.0_24
+              contracts:
+                consumers:
+                  - PERMIT-TCP-SRC-ANY-TO-DST-80_443
+            - name: VLAN101
+              bridge_domain: 10.1.102.0_24
+              contracts:
+                providers:
+                  - PERMIT-TCP-SRC-ANY-TO-DST-80_443
+
+      filters:
+        - name: TCP-SRC-ANY-TO-DST-80
+          entries:
+            - name: SRC-ANY-TO-DST-80
+              destination_from_port: 80
+              destination_to_port: 80
+
+        - name: TCP-SRC-ANY-TO-DST-443
+          entries:
+            - name: SRC-ANY-TO-DST-443
+              destination_from_port: 443
+              destination_to_port: 443
+
+      contracts:
+        - name: PERMIT-TCP-SRC-ANY-TO-DST-80_443
+          subjects:
+            - name: TCP-ENTRIES
+              filters:
+                - filter: TCP-SRC-ANY-TO-DST-80
+                - filter: TCP-SRC-ANY-TO-DST-443

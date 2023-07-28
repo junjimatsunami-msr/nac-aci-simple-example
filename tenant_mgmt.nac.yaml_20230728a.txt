@@ -1,0 +1,66 @@
+---
+apic:
+  tenants:
+    - name: mgmt
+
+      vrfs:
+        - name: mgmt.VRF1
+
+      bridge_domains:
+        - name: 10.1.100.0_24
+          vrf: mgmt.VRF1
+          subnets:
+          - ip: 10.1.100.1/24
+
+        - name: 10.1.101.0_24
+          vrf: mgmt.VRF1
+          advertise_host_routes: true
+          subnets:
+          - ip: 10.1.101.1/24
+
+        - name: 10.1.102.0_24
+          vrf: mgmt.VRF1
+          subnets:
+          - ip: 10.1.102.1/24
+
+      application_profiles:
+        - name: VLANS
+          endpoint_groups:
+            - name: VLAN100
+              bridge_domain: 10.1.100.0_24
+              contracts:
+                consumers:
+                  - PERMIT-TCP-SRC-ANY-TO-DST-80_443
+
+            - name: VLAN101
+              bridge_domain: 10.1.101.0_24
+              contracts:
+                providers:
+                  - PERMIT-TCP-SRC-ANY-TO-DST-80_443
+
+            - name: VLAN102
+              bridge_domain: 10.1.102.0_24
+              contracts:
+                providers:
+                  - PERMIT-TCP-SRC-ANY-TO-DST-80_443
+
+      filters:
+        - name: TCP-SRC-ANY-TO-DST-80
+          entries:
+            - name: SRC-ANY-TO-DST-80
+              destination_from_port: 80
+              destination_to_port: 80
+
+        - name: TCP-SRC-ANY-TO-DST-443
+          entries:
+            - name: SRC-ANY-TO-DST-443
+              destination_from_port: 443
+              destination_to_port: 443
+
+      contracts:
+        - name: PERMIT-TCP-SRC-ANY-TO-DST-80_443
+          subjects:
+            - name: TCP-ENTRIES
+              filters:
+                - filter: TCP-SRC-ANY-TO-DST-80
+                - filter: TCP-SRC-ANY-TO-DST-443
