@@ -70,16 +70,23 @@ apic:
       application_profiles:
         - name: VLANS
           endpoint_groups:
-            - name: VLAN100
+            - name: VLAN101
               bridge_domain: 10.1.101.0_24
               contracts:
                 consumers:
                   - PERMIT-TCP-SRC-ANY-TO-DST-80_443
-            - name: VLAN101
+            - name: VLAN102
               bridge_domain: 10.1.102.0_24
               contracts:
                 providers:
                   - PERMIT-TCP-SRC-ANY-TO-DST-80_443
+          endpoint_security_group:
+           - name: ESG1
+             description: ESG description
+             vrf: VRF1
+             epg_selectors:
+             - endpoint_group: VLAN101
+             - endpoint_group: VLAN102
 
       filters:
         - name: TCP-SRC-ANY-TO-DST-80
