@@ -10,7 +10,7 @@ apic:
           arp_flooding: false
           ip_dataplane_learning: false
           limit_ip_learn_to_subnets: false
-          multi_destination_flooding: encap-flood
+          multi_destination_flooding: bd-flood
           unknown_unicast: proxy
           unknown_ipv4_multicast: flood
           unknown_ipv6_multicast: flood
@@ -20,7 +20,7 @@ apic:
           vrf: VRF1
           subnets:
             - ip: 10.1.101.1/24
-              description: mgmt.100
+              description: mgmt.101
               primary_ip: true
               public: true
               private: false
@@ -42,7 +42,7 @@ apic:
           arp_flooding: false
           ip_dataplane_learning: false
           limit_ip_learn_to_subnets: false
-          multi_destination_flooding: encap-flood
+          multi_destination_flooding: bd-flood
           unknown_unicast: proxy
           unknown_ipv4_multicast: flood
           unknown_ipv6_multicast: flood
@@ -87,7 +87,6 @@ apic:
             - name: SRC-ANY-TO-DST-80
               destination_from_port: 80
               destination_to_port: 80
-
         - name: TCP-SRC-ANY-TO-DST-443
           entries:
             - name: SRC-ANY-TO-DST-443
