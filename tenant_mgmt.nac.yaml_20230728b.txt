@@ -1,6 +1,8 @@
 apic:
   tenants:
     - name: mgmt
+      vrfs:
+        - name: VRF1
       bridge_domains:
         - name: BD1
           alias: mgmt_BD1
